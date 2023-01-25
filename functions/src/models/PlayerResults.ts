@@ -2,6 +2,7 @@
  * Represents the Player Ranking Results.
  */
 export default class PlayerResults {
+  position: number;
   playerName: string;
   finalScore: number;
 
@@ -11,5 +12,6 @@ export default class PlayerResults {
   constructor() {
     this.playerName = "";
     this.finalScore = 0;
+    this.position = 0;
   }
 }

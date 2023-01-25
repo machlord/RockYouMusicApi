@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 import * as functions from "firebase-functions";
 import admin = require("firebase-admin");
 import Player from "./models/Player";
@@ -39,15 +40,24 @@ export const worldRanking = functions.https.onRequest(
           .child("Player")
           .get().then((dataSnapShot) => {
             const listPlayers = <Player[]>_.toArray(dataSnapShot.val());
-            const listPlayerRemaps = listPlayers.map((row) => {
-              return <PlayerResults> {
-                playerName: row.name,
-                finalScore: row.scores
-                    .map((x) => x.points).reduce((a, b) => a + b, 0),
-              };
-            });
+            const listPlayerRemaps = listPlayers
+                .map((row) => {
+                  return <PlayerResults> {
+                    playerName: row.name,
+                    finalScore: row.scores == null
+                      ? 0
+                      : row.scores?.map((x) => x.points)
+                          .reduce((a, b) => a + b, 0),
+                  };
+                });
+
             response.send(
                 listPlayerRemaps.sort((a, b) => b.finalScore - a.finalScore)
+                    .slice(0, 5)
+                    .map((row, index) => {
+                      row.position = ++index;
+                      return row;
+                    })
             );
           });
     }
